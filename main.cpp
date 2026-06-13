@@ -38,7 +38,7 @@ struct HeapNode {
     int g_cost;
 };
 
-// MIN- Heap data structure 
+// STABLE MIN-HEAP DATA STRUCTURE
 class MinHeap {
 private:
     vector<HeapNode> nodes;
@@ -125,7 +125,7 @@ public:
     }
 };
 
-// 2. TEXTBOOK RED-BLACK TREE FOR ROUTE EXCLUSIONS
+// TEXTBOOK RED-BLACK TREE FOR ROUTE EXCLUSIONS
 struct RBTNode {
     long long key; 
     int u, v;
@@ -389,7 +389,7 @@ public:
 
 RedBlackTree globalExclusionTree;
 
-// 3. GRAPH REPRESENTATION ENGINE
+//  GRAPH REPRESENTATION ENGINE
 struct AdjNode {
     int vertex;
     int base_weight;
@@ -457,7 +457,7 @@ public:
     }
 };
 
-// 4. PATHFINDING CORE ALGORITHMS
+//  PATHFINDING CORE ALGORITHMS
 vector<int> buildPathSequence(int target, const vector<int>& parent) {
     vector<int> path;
     for (int v = target; v != -1; v = parent[v]) {
@@ -645,7 +645,7 @@ void runAStar(const Graph& graph, int source, int target, vector<int>& path, Per
     metrics.memory_used_bytes = (V * sizeof(int) * 2) + (V * sizeof(bool)) + (V * sizeof(HeapNode));
 }
 
-// 5. INPUT INGESTION & DATA UTILITIES
+// INPUT INGESTION & DATA UTILITIES
 Graph* generateGridGraph(int width, int height) {
     int vertices = width * height;
     Graph* g = new Graph(vertices, "Mesh Grid");
@@ -658,13 +658,13 @@ Graph* generateGridGraph(int width, int height) {
                 int v = u + 1;
                 int w = rand() % 20 + 5;
                 g->addEdge(u, v, w);
-                g->addEdge(v, u, w); // Bidirectional implementation
+                g->addEdge(v, u, w);
             }
             if (r + 1 < height) {
                 int v = u + width;
                 int w = rand() % 20 + 5;
                 g->addEdge(u, v, w);
-                g->addEdge(v, u, w); // Bidirectional implementation
+                g->addEdge(v, u, w); 
             }
         }
     }
@@ -722,13 +722,13 @@ Graph* loadGraphFromCSV(const string& filepath) {
     return g;
 }
 
-// 6. ENHANCED STOCHASTIC BENCHMARKING FRAMEWORK
+// ENHANCED STOCHASTIC BENCHMARKING FRAMEWORK
 void runBenchmarkSuite(const Graph& graph) {
     const int NUM_PAIRS = 10;
-    cout << "\n ALGORITHM BENCHMARK RESULTS \n";
-    cout << "  Graph Type : " << graph.type_label << " | Node Count: " << graph.num_vertices << "\n";
+    cout << "\n=================================== ALGORITHM BENCHMARK RESULTS ===================================\n";
+    cout << "  Graph Type: " << graph.type_label << " | Node Count: " << graph.num_vertices << "\n";
     cout << "  Sampling Profile: " << NUM_PAIRS << " uniform random coordinate evaluation pairs\n";
-    cout << "\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
 
     double avg_bfs_cost = 0, avg_bfs_nodes = 0, avg_bfs_skipped = 0, avg_bfs_mem = 0, avg_bfs_time = 0;
     double avg_dijk_cost = 0, avg_dijk_nodes = 0, avg_dijk_skipped = 0, avg_dijk_mem = 0, avg_dijk_time = 0;
@@ -783,7 +783,6 @@ void runBenchmarkSuite(const Graph& graph) {
          << setw(16) << "Routes Skipped" << " | "
          << setw(16) << "Memory (Bytes)" << " | "
          << setw(12) << "Time (ms)" << "\n";
-    cout << "\n";
 
     auto printAvgRow = [](const string& name, double cost, double nodes, double skipped, double mem, double time) {
         cout << left << setw(18) << name << " | "
@@ -797,7 +796,7 @@ void runBenchmarkSuite(const Graph& graph) {
     printAvgRow("BFS (Unweighted)", avg_bfs_cost, avg_bfs_nodes, avg_bfs_skipped, avg_bfs_mem, avg_bfs_time);
     printAvgRow("Dijkstra", avg_dijk_cost, avg_dijk_nodes, avg_dijk_skipped, avg_dijk_mem, avg_dijk_time);
     printAvgRow("A* Search", avg_astar_cost, avg_astar_nodes, avg_astar_skipped, avg_astar_mem, avg_astar_time);
-    cout << "\n";
+
 
     double speedup = avg_dijk_time / (avg_astar_time + 1e-9);
     double node_reduction = 0.0;
@@ -805,17 +804,16 @@ void runBenchmarkSuite(const Graph& graph) {
         node_reduction = ((avg_dijk_nodes - avg_astar_nodes) / avg_dijk_nodes) * 100.0;
     }
 
-    cout << "\n PERFORMANCE ANALYTICS \n";
+    cout << "\n                               PERFORMANCE ANALYTICS \n";
     cout << "  • A* reduction workspace: " << fixed << setprecision(2) << (node_reduction < 0 ? 0.0 : node_reduction) << "% fewer node settlements than Dijkstra.\n";
     cout << "  • A* acceleration ratio : " << speedup << "x faster traversal efficiency relative to Dijkstra.\n";
-    cout << "\n";
 }
 
-// 7. DASHBOARD TELEMETRY MONITOR
+// DASHBOARD TELEMETRY MONITOR
 void displayDashboard(const string& alg, int cost, int visited, double time_ms, TrafficMode traffic, int hops, int skipped) {
-    cout << "\n\n";
+
     cout << "                     ROUTE METRICS DASHBOARD            \n";
-    cout << "\n";
+
     cout << "  • Algorithm Name       : " << alg << "\n";
     cout << "  • Traffic Mode         : " << (traffic == TRAFFIC_NORMAL ? "NORMAL" : traffic == TRAFFIC_PEAK_HOUR ? "PEAK HOUR" : "HEAVY TRAFFIC") << "\n";
     cout << "  • Excluded Edges Count : " << globalExclusionTree.getCount() << "\n";
@@ -824,10 +822,34 @@ void displayDashboard(const string& alg, int cost, int visited, double time_ms, 
     cout << "  • Total Hop Count      : " << hops << "\n";
     cout << "  • Explored Node Count  : " << visited << "\n";
     cout << "  • Execution Latency    : " << fixed << setprecision(4) << time_ms << " ms\n";
-    
+
 }
 
-// 8. SYSTEM EXECUTIVE CONTROLLER
+//  DYNAMIC ROUTE RECALCULATION HELPER
+int calculatePathCost(const Graph& graph, const vector<int>& path) {
+    if (path.empty() || path.size() == 1) return 0;
+    int total_cost = 0;
+    for (size_t i = 0; i < path.size() - 1; i++) {
+        int u = path[i];
+        int v = path[i+1];
+        if (globalExclusionTree.rbt_search(u, v)) return INF;
+        
+        AdjNode* adj = graph.array[u].head;
+        int edge_w = INF;
+        while (adj) {
+            if (adj->vertex == v) {
+                edge_w = adj->current_weight;
+                break;
+            }
+            adj = adj->next;
+        }
+        if (edge_w == INF) return INF;
+        total_cost += edge_w;
+    }
+    return total_cost;
+}
+
+// SYSTEM EXECUTIVE CONTROLLER
 int main() {
     srand(1337); 
     int current_dim = 20;
@@ -842,45 +864,56 @@ int main() {
     int last_cost = INF;
 
     auto triggerDynamicRecalculation = [&]() {
-        if (last_known_src == -1 || last_known_dst == -1) return;
+        if (last_known_src == -1 || last_known_dst == -1 || last_path.empty()) return;
         
-        cout << "\n             DYNAMIC ROUTE RECALCULATION              \n";
-        cout << "  [System Notice] Topology structural variance detected. Syncing updates...\n";
+        cout << "\n                 DYNAMIC ROUTE RECALCULATION\n";
         
-        vector<int> new_path;
-        PerformanceMetrics new_metrics;
-        runAStar(*current_graph, last_known_src, last_known_dst, new_path, new_metrics);
+        cout << "Original Route Cost : " << (last_cost == INF ? -1 : last_cost) << "\n";
+        cout << "Original Path:\n";
+        for (size_t i = 0; i < last_path.size(); i++) {
+            cout << last_path[i] << (i + 1 < last_path.size() ? " -> " : "");
+        }
+        cout << "\n";
 
-        cout << "  Previous Route Cost: " << (last_cost == INF ? -1 : last_cost) << "\n";
-        cout << "  Updated Route Cost : " << (new_metrics.path_cost == INF ? -1 : new_metrics.path_cost) << "\n";
-        cout << "  Cost Difference    : ";
-        if (last_cost == INF || new_metrics.path_cost == INF) cout << "N/A\n";
-        else cout << (new_metrics.path_cost - last_cost) << "\n";
-        
-        cout << "  Previous Path: ";
-        if (last_path.empty()) cout << "None\n";
-        else {
-            for (size_t i = 0; i < last_path.size(); i++) {
-                cout << last_path[i] << (i + 1 < last_path.size() ? " -> " : "");
+        int congested_cost = calculatePathCost(*current_graph, last_path);
+        cout << "Congested Route Cost : " << (congested_cost == INF ? -1 : congested_cost) << "\n";
+        cout << "Congested Path:\n";
+        for (size_t i = 0; i < last_path.size(); i++) {
+            cout << last_path[i] << (i + 1 < last_path.size() ? " -> " : "");
+        }
+        cout << "\n";
+
+        vector<int> alternative_path;
+        PerformanceMetrics alternative_metrics;
+        runAStar(*current_graph, last_known_src, last_known_dst, alternative_path, alternative_metrics);
+        int alternative_cost = alternative_metrics.path_cost;
+
+        cout << "Alternative Route Cost : " << (alternative_cost == INF ? -1 : alternative_cost) << "\n";
+        cout << "Alternative Path:\n";
+        if (alternative_path.empty()) {
+            cout << "None";
+        } else {
+            for (size_t i = 0; i < alternative_path.size(); i++) {
+                cout << alternative_path[i] << (i + 1 < alternative_path.size() ? " -> " : "");
             }
-            cout << "\n";
+        }
+        cout << "\n";
+
+        if (alternative_cost < congested_cost && alternative_cost != INF) {
+            cout << "[Route Change Detected]\n";
+            cout << "A cheaper alternative route has been discovered.\n";
+            cout << "Savings : " << (congested_cost == INF ? "Infinite (Path Unblocked)" : to_string(congested_cost - alternative_cost)) << "\n";
+        } else {
+            cout << "[Route Unchanged]\n";
+            cout << "Current route remains optimal.\n";
         }
 
-        cout << "  Updated Path : ";
-        if (new_path.empty()) cout << "None\n";
-        else {
-            for (size_t i = 0; i < new_path.size(); i++) {
-                cout << new_path[i] << (i + 1 < new_path.size() ? " -> " : "");
-            }
-            cout << "\n";
-        }
-
-        last_path = new_path;
-        last_cost = new_metrics.path_cost;
+        last_path = alternative_path;
+        last_cost = alternative_cost;
     };
 
     while (true) {
-        cout << "\n    OPTIMAL ROUTE MANAGEMENT SYSTEM \n";
+        cout << "\n OPTIMAL ROUTE MANAGEMENT SYSTEM\n";
         cout << "1. Load Graph from CSV\n";
         cout << "2. Generate Grid Graph\n";
         cout << "3. Add Avoided Route\n";
@@ -933,7 +966,7 @@ int main() {
             cout << "  Route edge removed from Red-Black Tree exclusion rules.\n";
             triggerDynamicRecalculation();
         } else if (menu_input == 5) {
-            cout << "\n--- REGISTERED TREE EXCLUSIONS ACTIVE ---\n";
+            cout << "\n    REGISTERED TREE EXCLUSIONS ACTIVE  \n";
             globalExclusionTree.listExclusions();
         } else if (menu_input == 6) {
             int option;
@@ -973,7 +1006,7 @@ int main() {
                 }
                 cout << "\n";
             } else {
-                cout << "  No path vector discovered connecting specified target boundaries.\n";
+                cout << " No path vector discovered connecting specified target boundaries.\n";
             }
         } else if (menu_input == 8) {
             runBenchmarkSuite(*current_graph);
